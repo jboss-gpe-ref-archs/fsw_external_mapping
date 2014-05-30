@@ -46,12 +46,11 @@ Repeat this for the output .xml file (orderAck.xml). Now you are ready to create
 
 image::images/MapFIOMapping.JPG[]
 
-Export the mapping as XSLT. Go to File->Generate Code in->XSLT 1.0. Name the file orderAMF10.xslt. Edit out the part that references the .xsd that MapForce has created and copy it over to your SY development machine under ../xslt.
+Export the mapping as XSLT. Go to File->Generate Code in->XSLT 1.0. Name the file orderAMF10.xslt. Edit out the part that references the .xsd that MapForce has created and copy it over to your SY development machine under ../xslt:
 
-<!--			
-<xsl:attribute name="xsi:schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance">urn:switchyard-quickstart:transform-xslt:1.0 <file_location>/orderAck.xsd</xsl:attribute> 
--->
-
+  <!--			
+    <xsl:attribute name="xsi:schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance">urn:switchyard-quickstart:transform-xslt:1.0 <file_location>/orderAck.xsd</xsl:attribute> 
+  -->
 
 === Modify and build the Switchyard project 
 To use the newly created .xslt, make the following modifications to the Switchyard project:
