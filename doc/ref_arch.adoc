@@ -6,40 +6,115 @@ image::images/rhheader.png[width=900]
 
 :numbered!:
 [abstract]
-== JBoss GPE Reference Architecture:  Template
+== JBoss GPE Reference Architecture:  XSLT Mapping Transformation using external mapping UI tool
 
 :numbered:
 
-== Abstract
+Introduction
+============
 
-== Overview
+This reference architecture demonstrates the usage of the XSLT transformer that leverages the transform built in an external mapping GUI.  The service contained is a dummy service (OrderService) which simply returns the order object so that it can 
+be processed by the transformer.  The object is then transformed from an Order object to an 
+OrderAck object using XSLT.  
+
+![Transform XSLT Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/transform-xslt/transform-xslt.jpg)
+
+This example is invoked through a SOAP gateway binding.  
+
 
 == Pre-Requisites
-
+- A licensed copy of Altova MapForce and access to a Windows machine
+- Fuse Service Works 6.0.0.GA installed locally
+- JBDS and Maven to build the project
+- SOAP UI for testing SOAP request/reply
 == Procedure
 * For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this reference architecture.
 
-== Performance Testing
-* JMeter is used to drive testing of the reference architecture.
-* You do not need to download a seperate JMeter binary nor source distribution
-* Instead, JMeter will be downloaded, installed and appropriately configured as part of the configuration found in $REF_ARCH_HOME/loadtest
-* jmeter maven plugin
-** Notice use of the com.lazerycode.jmeter:jmeter-maven-plugin in _$REF_ARCH_HOME/loadtest/pom.xml_ 
-** This maven plugin downloads, installs and appropriately configures JMeter
-** This maven plugin is also used to drive test scenarios
-* ref_arch.jmx
-** A sample default jmeter load test definition file is included in: $REF_ARCH_HOME/loadtest/src/test/jmeter/ref_arch.jmx
-** This jmeter load test definition file can be viewed and manipulated via the JMeter GUI by:
-*** cd $REF_ARCH_HOME/loadtest
-** Notice that the default, OOB configuration is to spawn a single client that invokes a single test case
-** ./jmeter_gui.sh
-* Java Sampler
-** Also included is an example Java _Sampler_ at:  $REF_ARCH_HOME/loadtest/src/test/java/com/redhat/gpe/refarch/ref_arch_template/loadtest/ExampleJMeterClient.java
-** The use of a JMeter _sampler_ class is optional
-** cd $REF_ARCH_HOME/loadtest
-** mvn clean verify
+=== Perform the UI mapping in Altova MapForce
+
+==== Install Altove MapForce
+Navigate to the link (http://www.altova.com/download/mapforce.html) to download and install Altova MapForce on your Windows machine. 
+
+Once installed, go through the instructions to get the license for it.
+
+==== Built a map between the input and output XML schemas
+Start the MapForce client and open a new project. Insert->XML Schema/File... and select the input .xml file (order.xml). A dialog pops up indicating selected XML file does not contain a schema reference and if you want MapForce to create a schema for you. Click Yes. The schema will appear in the canvas.
+
+image::images/MapFInputSchema.png[]
+
+ Repeat this for the output .xml file (orderAck.xml). Now you are ready to create the mapping. Refer to the documentation to create the mapping. The mapping is shown in Figure a.
+
+image::images/MapFIOMapping.png[]
+
+Export the mapping as XSLT. Go to File->Generate Code in->XSLT 1.0. Name the file orderAMF10.xslt. Edit out the part that references the .xsd that MapForce has created and copy it over to your SY development machine under ../xslt.
+
+<!--			
+<xsl:attribute name="xsi:schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance">urn:switchyard-quickstart:transform-xslt:1.0 <file_location>/orderAck.xsd</xsl:attribute> 
+-->
+
+
+=== Modify and build the Switchyard project 
+To use the newly created .xslt, make the following modifications to the Switchyard project:
+- Change the reference to the .xslt in switchyard.xml like
+
+ <transforms>
+ <transform.xslt xmlns="urn:switchyard-config:transform:1.0" from="{urn:switchyard-quickstart:transform-xslt:1.0}order" to="{urn:switchyard-quickstart:transform-xslt:1.0}orderAck" \
+xsltFile="xslt/orderAMF10.xslt"/>
+</transforms>
+
+
+Running the quickstart
+======================
+
+JBoss AS 7
+----------
+1. Build the quickstart:
+
+        mvn clean install
+
+2. Start JBoss AS 7 in standalone mode:
+
+        ${AS}/bin/standalone.sh
+
+3. Deploy the Quickstart : 
+
+        mvn jboss-as:deploy
+
+
+=== Test the Deployed Service
+
+Invoke the remotely deployed services by sending a SOAP request using the soapUI open source tool.
+ 
+. Start *soapUI*, and select *File -> New soapUI Project*.
+. In the *Initial WSDL/WADL* field, paste the full URL to the WSDL of your newly deployed remote `OrderService`.
++
+.Initial WSDL/WADL field
+image::images/soapui_new_project.png[]
+
+. Click *OK*. 
+. In the soapUI Navigator, right-click the `Request 1` test case and select *Show Request Editor*.
+. In the Request Editor, copy and paste the following request:
+
+    - SOAP-UI : Use the wsdl for this project (src/main/resources/wsdl/OrderService.wsdl) to 
+      create a soap-ui project. Use the sample request (src/test/resources/xml/soap-request.xml) 
+      as an example of a sample request. The output below is the expected output : 
+
+Expected Output
+===============
+```
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header/>
+   <SOAP-ENV:Body>
+      <orders:orderAck xmlns:orders="urn:switchyard-quickstart:transform-xslt:1.0">
+         <orderId>PO-19838-XYZ</orderId>
+         <accepted>true</accepted>
+         <status>Order Accepted</status>
+      </orders:orderAck>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+
 
 == To-Do
-. resolve this problem
-. resolve that problem
+. Create an example that uses .xsd's instead of WSDL for the XML validation
 =======
