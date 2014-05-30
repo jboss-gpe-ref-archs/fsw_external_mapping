@@ -37,14 +37,14 @@ Navigate to the link (http://www.altova.com/download/mapforce.html) to download 
 
 Once installed, go through the instructions to get the license for it.
 
-==== Built a map between the input and output XML schemas
+==== Build a map between the input and output XML schemas
 Start the MapForce client and open a new project. Insert->XML Schema/File... and select the input .xml file (order.xml). A dialog pops up indicating selected XML file does not contain a schema reference and if you want MapForce to create a schema for you. Click Yes. The schema will appear in the canvas.
 
-image::images/MapFInputSchema.png[]
+image::images/MapFInputSchema.JPG[]
 
- Repeat this for the output .xml file (orderAck.xml). Now you are ready to create the mapping. Refer to the documentation to create the mapping. The mapping is shown in Figure a.
+Repeat this for the output .xml file (orderAck.xml). Now you are ready to create the mapping. Refer to the documentation to create the mapping. The mapping is shown in Figure a.
 
-image::images/MapFIOMapping.png[]
+image::images/MapFIOMapping.JPG[]
 
 Export the mapping as XSLT. Go to File->Generate Code in->XSLT 1.0. Name the file orderAMF10.xslt. Edit out the part that references the .xsd that MapForce has created and copy it over to your SY development machine under ../xslt.
 
