@@ -55,12 +55,12 @@ Export the mapping as XSLT. Go to File->Generate Code in->XSLT 1.0. Name the fil
 
 === Modify and build the Switchyard project 
 To use the newly created .xslt, make the following modifications to the Switchyard project:
-- Change the reference to the .xslt in switchyard.xml like
+- Change the reference to the .xslt in switchyard.xml like:
 
- <transforms>
- <transform.xslt xmlns="urn:switchyard-config:transform:1.0" from="{urn:switchyard-quickstart:transform-xslt:1.0}order" to="{urn:switchyard-quickstart:transform-xslt:1.0}orderAck" \
+  <transforms>
+       <transform.xslt xmlns="urn:switchyard-config:transform:1.0" from="{urn:switchyard-quickstart:transform-xslt:1.0}order" to="{urn:switchyard-quickstart:transform-xslt:1.0}orderAck" \
 xsltFile="xslt/orderAMF10.xslt"/>
-</transforms>
+  </transforms>
 
 
 Running the quickstart
