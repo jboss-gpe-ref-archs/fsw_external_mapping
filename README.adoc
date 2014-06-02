@@ -7,14 +7,17 @@ image::doc/images/rhheader.png[width=900]
 :numbered!:
 
 == PURPOSE:
-* This architecture is focused on XSLT transformations within Switchyard composites. While SwitchYard provides powerful functionality for mapping between documents through JAXB, Smooks, JSON and XSLT transformers, enterprise users have expressed need for GUI-based mapping tool. 
-* This architecture demonstrates the use of Altova's MapForce GUI mapping tool where users can create mappings in the tool, generate XSLT 1.0 and use the generated .xslt file to map between documents in Switchyard.
+* This reference architecture is focused on XSLT transformations within Switchyard composites. 
+While SwitchYard provides powerful functionality for mapping between documents through JAXB, Smooks, JSON and XSLT transformers, enterprise users have expressed need for GUI-based mapping tool. 
+* This reference architecture demonstrates the use of Altova's MapForce GUI tool to create and generate xslt tranforms.
+These generated .xslt files are subsequently used to transform message payloads in Switchyard.
 
 == OVERVIEW:
 * This reference architecture is implemented in two phases:
-- Build a mapping the Altova MapForce GUI using an input and output XML and save it as XSLT 1.0
-- Copy over this .xslt to the Switchyard project and reference it in the switchyard xml clause that does the transform
+- Build a mapping in the Altova MapForce GUI using an input and output XML and save it as XSLT 1.0.
+- Copy this .xslt to a Switchyard project and reference it in the _transforms_ section of the switchyard.xml
 
-The Switchyard project consists simply of a service binding and implemenation of an order service. This service is implemented as a bean and has an additional transforms section that references the .xslt that was generated with Altova MapForce.
+The Switchyard project consists of a service binding and implemenation of an order service. 
+This service is implemented as a bean and has an additional transforms section that references the .xslt that was generated with Altova MapForce.
 
 For more details on the architecture, consult the link:doc/ref_arch.adoc[project documentation].
