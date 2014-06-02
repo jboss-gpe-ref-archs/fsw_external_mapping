@@ -87,17 +87,11 @@ Invoke the remotely deployed services by sending a SOAP request using the soapUI
  
 . Start *soapUI*, and select *File -> New soapUI Project*.
 . In the *Initial WSDL/WADL* field, paste the full URL to the WSDL of your newly deployed remote `OrderService`.
-+
-.Initial WSDL/WADL field
-image::images/soapui_new_project.png[]
-
 . Click *OK*. 
 . In the soapUI Navigator, right-click the `Request 1` test case and select *Show Request Editor*.
 . In the Request Editor, copy and paste the following request:
 
-    - SOAP-UI : Use the wsdl for this project (src/main/resources/wsdl/OrderService.wsdl) to 
-      create a soap-ui project. Use the sample request (src/test/resources/xml/soap-request.xml) 
-      as an example of a sample request. The output below is the expected output : 
+image::images/SOAPUIOrderRequest.png[]
 
 Expected Output
 ===============
