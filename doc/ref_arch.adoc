@@ -36,21 +36,30 @@ Navigate to the link (http://www.altova.com/download/mapforce.html) to download 
 Once installed, go through the instructions to get the license for it.
 
 ==== Build a map between the input and output XML schemas
-Start the MapForce client and open a new project. Insert->XML Schema/File... and select the input .xml file (order.xml). A dialog pops up indicating selected XML file does not contain a schema reference and if you want MapForce to create a schema for you. Click Yes. The schema will appear in the canvas.
+Start the MapForce client and open a new project. Insert->XML Schema/File... and select the input .xml file (order.xml). 
+A dialog pops up indicating selected XML file does not contain a schema reference and if you want MapForce to create a schema for you. 
+Click Yes. 
+The schema will appear in the canvas.
 
 image::images/MapFInputSchema.JPG[]
 
-Repeat this for the output .xml file (orderAck.xml). Now you are ready to create the mapping. Refer to the documentation to create the mapping. The mapping is shown in Figure a.
+Repeat this for the output .xml file (orderAck.xml). Now you are ready to create the mapping. 
+Refer to the documentation to create the mapping. The mapping is shown in Figure a.
 
 image::images/MapFIOMapping.JPG[]
 
-Export the mapping as XSLT. Go to File->Generate Code in->XSLT 1.0. Name the file orderAMF10.xslt. Edit out the part that references the .xsd that MapForce has created and copy it to your SwitchYard project under ../xslt:
+Export the mapping as XSLT. Go to File->Generate Code in->XSLT 1.0. Name the file orderAMF10.xslt. 
+Comment out the part that references the .xsd that MapForce :
 
-  <!--			
+-----
+<!--			
     <xsl:attribute name="xsi:schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance">urn:switchyard-quickstart:transform-xslt:1.0 <file_location>/orderAck.xsd</xsl:attribute> 
-  -->
+-->
+-----
+  
+Copy the xslt to :  $REF_ARCH_HOME/src/main/resource/xslt
 
-=== Modify the Switchyard project 
+=== Modify the SwitchYard project 
 To use the newly created .xslt, make the following modifications to the Switchyard project:
 - Change the reference to the .xslt in switchyard.xml as per the following:
 
@@ -60,7 +69,7 @@ xsltFile="xslt/orderAMF10.xslt"/>
   </transforms>
 
 
-=== Run the quickstart
+=== Build and deploy the SwitchYard project
 
 1. Build this reference architecture's SwitchYard project:
 
@@ -108,3 +117,4 @@ image::images/SOAPUIOrderRequest.png[]
 . Create an example that uses .xsd's instead of WSDL for the XML validation
 . Discuss use of supported FSW maven repositories .... reference FSW documentation on configuring settings.xml
 . Leverage GPE's Partner Demo System
+. How does a user determine the WSDL URL of the deployed service so as to add in SOAP-UI ?
