@@ -50,7 +50,7 @@ Export the mapping as XSLT. Go to File->Generate Code in->XSLT 1.0. Name the fil
     <xsl:attribute name="xsi:schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance">urn:switchyard-quickstart:transform-xslt:1.0 <file_location>/orderAck.xsd</xsl:attribute> 
   -->
 
-=== Modify and build the Switchyard project 
+=== Modify the Switchyard project 
 To use the newly created .xslt, make the following modifications to the Switchyard project:
 - Change the reference to the .xslt in switchyard.xml as per the following:
 
@@ -60,8 +60,7 @@ xsltFile="xslt/orderAMF10.xslt"/>
   </transforms>
 
 
-Run the quickstart
-======================
+=== Run the quickstart
 
 1. Build this reference architecture's SwitchYard project:
 
@@ -88,9 +87,9 @@ Invoke the remotely deployed services by sending a SOAP request using the soapUI
 
 image::images/SOAPUIOrderRequest.png[]
 
-Expected Output
-===============
-```
+=== Expected Output
+
+-----
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
    <SOAP-ENV:Header/>
    <SOAP-ENV:Body>
@@ -101,11 +100,11 @@ Expected Output
       </orders:orderAck>
    </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-```
+-----
 
 
 == To-Do
+
 . Create an example that uses .xsd's instead of WSDL for the XML validation
 . Discuss use of supported FSW maven repositories .... reference FSW documentation on configuring settings.xml
 . Leverage GPE's Partner Demo System
-=======
