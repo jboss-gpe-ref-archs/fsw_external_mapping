@@ -13,14 +13,12 @@ image::images/rhheader.png[width=900]
 Introduction
 ============
 
-This reference architecture demonstrates the usage of the XSLT transformer that leverages the transform built in an external mapping GUI.  The service contained is a dummy service (OrderService) which simply returns the order object so that it can 
-be processed by the transformer.  The object is then transformed from an Order object to an 
-OrderAck object using XSLT.  
+This reference architecture demonstrates a SwitchYard project making use of an xslt transform created via an external mapping GUI.  
+The service contained includes a SOAP based composite service binding and a component SwitchYard service called _OrderService_ .
+On the response path back to a client, the _OrderService_ returns an _Order_ object while the SOAP based composite service binding expects to return an _OrderAck_ object.
+To satisfy this type-mismatch on the response, the SwitchYard project defines an XSLT transform. 
 
-![Transform XSLT Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/transform-xslt/transform-xslt.jpg)
-
-This example is invoked through a SOAP gateway binding.  
-
+image:images/transformxslt.png[]
 
 == Pre-Requisites
 - A licensed copy of Altova MapForce and access to a Windows machine
@@ -46,7 +44,7 @@ Repeat this for the output .xml file (orderAck.xml). Now you are ready to create
 
 image::images/MapFIOMapping.JPG[]
 
-Export the mapping as XSLT. Go to File->Generate Code in->XSLT 1.0. Name the file orderAMF10.xslt. Edit out the part that references the .xsd that MapForce has created and copy it over to your SY development machine under ../xslt:
+Export the mapping as XSLT. Go to File->Generate Code in->XSLT 1.0. Name the file orderAMF10.xslt. Edit out the part that references the .xsd that MapForce has created and copy it to your SwitchYard project under ../xslt:
 
   <!--			
     <xsl:attribute name="xsi:schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance">urn:switchyard-quickstart:transform-xslt:1.0 <file_location>/orderAck.xsd</xsl:attribute> 
@@ -54,7 +52,7 @@ Export the mapping as XSLT. Go to File->Generate Code in->XSLT 1.0. Name the fil
 
 === Modify and build the Switchyard project 
 To use the newly created .xslt, make the following modifications to the Switchyard project:
-- Change the reference to the .xslt in switchyard.xml like:
+- Change the reference to the .xslt in switchyard.xml as per the following:
 
   <transforms>
        <transform.xslt xmlns="urn:switchyard-config:transform:1.0" from="{urn:switchyard-quickstart:transform-xslt:1.0}order" to="{urn:switchyard-quickstart:transform-xslt:1.0}orderAck" \
@@ -62,18 +60,16 @@ xsltFile="xslt/orderAMF10.xslt"/>
   </transforms>
 
 
-Running the quickstart
+Run the quickstart
 ======================
 
-JBoss AS 7
-----------
-1. Build the quickstart:
+1. Build this reference architecture's SwitchYard project:
 
         mvn clean install
 
-2. Start JBoss AS 7 in standalone mode:
+2. Start Fuse Service Works in standalone mode:
 
-        ${AS}/bin/standalone.sh
+        ${FSW_HOME}/bin/standalone.sh
 
 3. Deploy the Quickstart : 
 
@@ -110,4 +106,6 @@ Expected Output
 
 == To-Do
 . Create an example that uses .xsd's instead of WSDL for the XML validation
+. Discuss use of supported FSW maven repositories .... reference FSW documentation on configuring settings.xml
+. Leverage GPE's Partner Demo System
 =======
