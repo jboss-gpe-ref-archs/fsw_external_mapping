@@ -1,6 +1,7 @@
 :data-uri:
 :toc2:
 :rhtlink: link:https://www.redhat.com[Red Hat]
+:mapforce: link:http://www.altova.com/download/mapforce.html[this link]
 
 image::images/rhheader.png[width=900]
 
@@ -31,7 +32,7 @@ image:images/transformxslt.png[]
 === Perform the UI mapping in Altova MapForce
 
 ==== Install Altove MapForce
-Navigate to the link (http://www.altova.com/download/mapforce.html) to download and install Altova MapForce on your Windows machine. 
+Navigate to {mapforce} to download and install Altova MapForce on your Windows machine. 
 
 Once installed, go through the instructions to get the license for it.
 
