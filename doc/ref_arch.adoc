@@ -1,91 +1,239 @@
 :data-uri:
 :toc2:
 :rhtlink: link:https://www.redhat.com[Red Hat]
+:mwlaboverviewsetup: link:http://people.redhat.com/jbride/labsCommon/setup.html[Middleware Lab Overview and Set-up]
+:mvnrepos: link:https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_Fuse_Service_Works/6/html-single/Installation_Guide/index.html#chap-Maven_Repositories[Maven Repositories]
+:installintegrationstack: link:https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_Fuse_Service_Works/6/html-single/Installation_Guide/index.html#Install_JBoss_Developer_Studio_Integration_Stack[Install Integration Stack]
 
 image::images/rhheader.png[width=900]
 
 :numbered!:
 [abstract]
-== JBoss GPE Reference Architecture:  XSLT Mapping Transformation using external mapping UI tool
+== XSLT Transform Using External Mapping Tool
 
 :numbered:
 
 Introduction
 ============
 
-This reference architecture demonstrates the usage of the XSLT transformer that leverages the transform built in an external mapping GUI.  The service contained is a dummy service (OrderService) which simply returns the order object so that it can 
-be processed by the transformer.  The object is then transformed from an Order object to an 
-OrderAck object using XSLT.  
+This reference architecture demonstrates the usage of the JBoss Fuse Service Works (FSW) built-in XSLT transformer.
 
-![Transform XSLT Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/transform-xslt/transform-xslt.jpg)
+The XSLT stylesheet leveraged by the FSW XSLT transform is built in an external mapping tool (Altova MapForce).
 
-This example is invoked through a SOAP gateway binding.  
+This reference architecture contains a SwitchYard application called `transform-xslt`.
+`transform-xslt` is a slightly modified version of the stock `transform-xslt` quickstart available from JBoss Fuse Service Works.
 
+The `transform-xslt` SwitchYard application defines a SOAP gateway as well as a `Component Service` implemented by a `Java Bean` component.
+The response path back to the SOAP client from Component Service -> SOAP binding Service Gateway involves an XSLT tranformation.
+
+image::images/transformxslt.png[]
 
 == Pre-Requisites
-- A licensed copy of Altova MapForce and access to a Windows machine
-- Fuse Service Works 6.0.0.GA installed locally
-- JBDS and Maven to build the project
-- SOAP UI for testing SOAP request/reply
-== Procedure
-* For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this reference architecture.
+The remainder of this documentation provides instructions for installation, configuration and execution of this reference architecture in Red Hat's Partner Demo System.
+The following is a list of pre-requisites:
 
-=== Perform the UI mapping in Altova MapForce
+. A licensed copy of Altova MapForce and a Windows machine
+. OPENTLC-SSO credentials
++
+`OPENTLC-SSO` user credentials are used to log into the Red Hat Partner Demo System (PDS).
+If you do not currently have an `OPENTLC-SSO` userId, please email: `OPEN-program@redhat.com`.
 
-==== Install Altove MapForce
+. Familiarity with Partner Demo System
++
+If you are not already familiar with Red Hat's `Partner Demo System`, please execute what is detailed in the {mwlaboverviewsetup} guide.
+Doing so will ensure that you are proficient with the tooling and workflow needed to complete this reference architecture in an OpenShift Platform as a Service environment.
+
+. Familiarity with {fswproduct}
+. SOAP UI
+
+== Provision OpenShift Application
+Partner Demo System allows for the creation and hosting of JBoss Fuse Service Works in a cloud environment.
+
+This cloud environment is powered by Red Hat's OpenShift Enterprise Platform-as-a-Service (PaaS) environment.
+You can access this online lab environment 24/7.
+Using this lab environment enables you to focus on developing services and business logic using JBoss middleware instead of installation and configuration details.
+
+=== Provision Fuse Service Works application
+
+. Open the `Openshift Explorer` panel of the `JBoss` perspective of JBDS
+. Right-click on the previously created connection to `broker00.ose.opentlc.com`.
++
+Using your `OPENTLC-SSO` credentials, a connection to `broker00.ose.opentlc.com` should already exist after having completed the {mwlaboverviewsetup} guide.
+
+. Select: `New -> Application` .
++
+Since you have already created a domain from the previous introductory lab, the workflow for creation of a new application will be slightly different than what you are used to.
+In particular, the OSE plugin will not prompt you for the creation of a new domain.
+
+. The following `New or existing OpenShift Application` pop-up should appear:
++
+image::images/new_OSE_app_fsw.png[width=500]
+
+.. In the `Name` text box, enter: `fswapp`
+.. From the `Type` drop-down, select: JBoss Fuse Service Works 6.0 (rhgpe-fsw-6.0)
+.. From the `Gear profile` drop-down, select: pds_medium
+.. From the `Embeddable Cartridges` section, select: `MySQL 5.1` or `MySQL 5.5`
+
+. Click `Next`
+. A new dialogue appears entitled `Set up Project for new OpenShift Aplication`.
++
+Check the check box for `Disable automatic maven build when pushing to OpenShift`.
+Afterwards, Click `Next`.
+
+. A new dialogue appears entitled `Import an existing OpenShift application`.
++
+Even though it will not be used, you will be forced to clone the remote git enabled project associated with your new OpenShift application.
+Uncheck "Use default clone location" and select a location on your local filesystem where the git enabled project should be cloned to.
++
+image::images/git_clone_OSE.png[width=500]
+
+. Click `Finish`
+. The OSE plugin of JBDS will spin for a couple of minutes as the remote FSW 6 enabled OpenShift application is created.
+. Eventually, the OSE plugin will prompt with a variety of pop-up related details regarding your new application.
+Click through all of them except when you come to the dialogue box entitled `Publish fswapp?`.
+For this dialogue box, click `No`
++
+image::images/publishfswlab.png[]
+
+=== FSW App Verification
+
+. Using the `Remote System Explorer` perspective of JBDS, open an SSH terminal and tail the `fsw/standalone/log/server.log` of your remote FSW enabled OSE application.
+. Log messages similar to the following should appear:
++
+image::images/tail_log_OSE_fsw.png[width=700]
+
+. Also, in the `Project Explorer` panel of JBDS, the `fswlab` maven project should be listed.
+
+Congratulations!  You have successfully provisioned your FSW 6 enabled application.
+
+== Configuration and Deployment
+
+=== Ensure installation of `IntegrationStack` plugins
+The `IntegrationStack` suite of plugins for JBoss Developer Studio is a requirement for this reference architecture.
+If you have not already done so, ensure that this suite of plugins is installed as per the {installintegrationstack} section of the FSW installation guide.
+
+=== Ensure proper Maven configuration
+A portion of this reference architecture includes a SwitchYard application that will be imported into your JBDS via maven.
+Make sure that your default maven `settings.xml` is configured to reference the supported on-line or off-line Fuse Service Works maven repository.
+This procedure is discussed in the {mvnrepos} section of the Fuse Service Works Installation Guide.
+
+=== Install Altova MapForce
 Navigate to the link (http://www.altova.com/download/mapforce.html) to download and install Altova MapForce on your Windows machine. 
 
-Once installed, go through the instructions to get the license for it.
+Once installed, go through the instructions to acquire a license.
 
-==== Build a map between the input and output XML schemas
-Start the MapForce client and open a new project. Insert->XML Schema/File... and select the input .xml file (order.xml). A dialog pops up indicating selected XML file does not contain a schema reference and if you want MapForce to create a schema for you. Click Yes. The schema will appear in the canvas.
+=== Clone this reference architecture
 
+. Open the `Git` perspective of JBDS.
+. In the `Git Repositories` panel, click the link that allows you to `Clone a Git Repository and add the clone to this view`
+. A pop-up should appear with a name of `Source Git Repository`
+. In the `URI` field, enter the following:
++
+-----
+https://github.com/jboss-gpe-ref-archs/fsw_external_mapping.git
+-----
+
+Click `Next`
++
+image::images/clone_repo_to_local.png[]
+
+. Continue to click `Next` through the various screens
++
+On the pop-up screen entitled `Local Destination`, change the default value of the `Directory` field to your preferred location on disk.
+For the purposes of the remainder of these instructions, this directory on your local filesystem will be referred to as:  $REF_ARCH_HOME
+
+. On the last screen of the `Clone Git Repository` pop-up, click `Finish`
++
+Doing so will clone this `fsw_external_mapping` repository to your local disk
+
+. In JBDS, switch to the `Project Explorer` panel and navigate to:  `File -> Import -> Maven -> Existing Maven Projects`
+. In the `Root Directory` field of the `Maven Projects` pop-up, navigate to the location on disk where the `fsw_external_mapping` project was just cloned to.
++
+image::images/import_mvn_project.png[]
+
+. Click `next` through the various pop-up panels and finally `Finish`.
+. Your `Project Explorer` panel should now include the following mavenized projects
++
+image::images/maven_projects.png[]
+
+=== Build XSLT Mapping
+The purpose of this section of the reference architecture is to generate an XSLT stylesheet given in Altova MapForce given inbound and outbound sample XML payloads.
+
+The sample XML payloads are provided as part of this reference architecture:
+
+. $REF_ARCH_HOME/src/test/resources/xml/order.xml
+. $REF_ARCH_HOME/src/test/resources/xml/orderAck.xml
+
+Start the MapForce client and open a new project.
+
+==== Insert sample XML files into Altova MapForce
+The following will be executed for both the `order.xml` and `orderAck.xml` sample XML files:
+
+. Navigate to `Insert->XML Schema/File...` 
+. As the input file, select:  `$REF_ARCH_HOME/src/test/resources/xml/order.xml`
+. A dialog pops up indicating selected XML file does not contain a schema reference and if you want MapForce to create a schema for you.
++
+Click Yes.
+
+. The schema will appear in the canvas.
++
 image::images/MapFInputSchema.JPG[]
 
-Repeat this for the output .xml file (orderAck.xml). Now you are ready to create the mapping. Refer to the documentation to create the mapping. The mapping is shown in Figure a.
+. Repeat this procedure for the output .xml file: orderAck.xml.
+
+==== Generate XSLT from Altova MapForce
+The XSLT is now ready to be generated by MapForce.
+Refer to the documentation to create the mapping.
 
 image::images/MapFIOMapping.JPG[]
 
-Export the mapping as XSLT. Go to File->Generate Code in->XSLT 1.0. Name the file orderAMF10.xslt. Edit out the part that references the .xsd that MapForce has created and copy it over to your SY development machine under ../xslt:
+. Navigate to File->Generate Code in->XSLT 1.0. 
+. Name the file orderAMF10.xslt.
 
-  <!--			
-    <xsl:attribute name="xsi:schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance">urn:switchyard-quickstart:transform-xslt:1.0 <file_location>/orderAck.xsd</xsl:attribute> 
-  -->
+==== Copy and edit XSLT
+
+Now that Altova MapForce has generated the XSLT, this XSLT needs to be included as a resource of the `transform-xslt` SwitchYard project included in this reference architecture.
+
+. Using your File Explorer utility of choice on your Windows machine, copy the newly generated XSLT to the following directory:
++
+-----
+$REF_ARCH_HOME/src/main/resources/xslt
+-----
+
+. Refresh the `transform-xslt` project in the `Project Explorer` panel of JBDS.
+. In JBDS, open the `orderAMF10.xslt`
+. Edit out the references to `orderAck.xsd`:
++
+-----
+40      <!--			
+41          <xsl:attribute name="xsi:schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance">urn:switchyard-quickstart:transform-xslt:1.0 <file_location>/orderAck.xsd</xsl:attribute> 
+42      -->
+-----
+
+. Save the modified: `orderAMF10.xslt`
 
 === Modify and build the Switchyard project 
-To use the newly created .xslt, make the following modifications to the Switchyard project:
-- Change the reference to the .xslt in switchyard.xml like:
+The `transform-xslt` SwitchYard application now needs to reference the newly generated `orderAMF10.xslt` mapping file.
 
-  <transforms>
-       <transform.xslt xmlns="urn:switchyard-config:transform:1.0" from="{urn:switchyard-quickstart:transform-xslt:1.0}order" to="{urn:switchyard-quickstart:transform-xslt:1.0}orderAck" \
-xsltFile="xslt/orderAMF10.xslt"/>
-  </transforms>
+. In the `Project Explorer` panel of JBDS, open :  `transform-xslt/src/main/resources/META-INF/switchyard.xml`
 
 
-Running the quickstart
-======================
 
-JBoss AS 7
-----------
-1. Build the quickstart:
-
-        mvn clean install
-
-2. Start JBoss AS 7 in standalone mode:
-
-        ${AS}/bin/standalone.sh
-
-3. Deploy the Quickstart : 
-
-        mvn jboss-as:deploy
+=== Build and deploy transform-xslt SwitchYard application
 
 
-=== Test the Deployed Service
+=== Test
 
 Invoke the remotely deployed services by sending a SOAP request using the soapUI open source tool.
- 
+
+. Download and install `soapUI` on your Windows machine 
 . Start *soapUI*, and select *File -> New soapUI Project*.
 . In the *Initial WSDL/WADL* field, paste the full URL to the WSDL of your newly deployed remote `OrderService`.
++
+image::images/createsoapuiclient.png[]
++
+NOTE: The value of the URL was determined previously from the `fsw/standalone/log/server.log` when the `transform-xslt` SwitchYard service was deployed to the remote FSW enabled OpenShift Enterprise environment.
+
 . Click *OK*. 
 . In the soapUI Navigator, right-click the `Request 1` test case and select *Show Request Editor*.
 . In the Request Editor, copy and paste the following request:
@@ -107,7 +255,6 @@ Expected Output
 </SOAP-ENV:Envelope>
 ```
 
-
 == To-Do
+
 . Create an example that uses .xsd's instead of WSDL for the XML validation
-=======

@@ -25,7 +25,7 @@ public class OrderServiceBean implements OrderService {
         // received in the input parameter. In a real-world service,
         // we would have some code here processing the order XML before
         // XSLT transformer transform it to orderAck XML. 
-    	System.out.println("Inside submitOrder\n"+ order);
+        System.out.println("Inside submitOrder\n"+ order);
         return order;
     }
 
